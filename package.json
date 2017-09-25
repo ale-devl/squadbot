@@ -1,0 +1,30 @@
+{
+  "name": "sweetiebot",
+  "version": "0.0.2",
+  "description": "Definitely still not trying to take over world domination.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "run":   "node index.js",
+    "dev":   "nodemon index.js",
+    "test":  "test"
+  },
+  "author": "aletuna",
+  "license": "ISC",
+  "repository": "/sweetiebot",
+  "dependencies": {
+    "bufferutil": "^3.0.2",
+    "discord.js": "^11.1.0",
+    "erlpack": "github:hammerandchisel/erlpack",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "libsodium-wrappers": "^0.5.2",
+    "node-opus": "^0.2.6",
+    "opusscript": "0.0.3",
+    "sodium": "^2.0.1",
+    "uws": "^0.14.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.4.0"
+  }
+}
