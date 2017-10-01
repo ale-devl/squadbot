@@ -60,10 +60,10 @@
     // Enable/disable default JavaScript formatter.
     "javascript.format.enable": true,
     // Defines space handling after opening and before closing non empty parenthesis.
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
     // Defines space handling after opening and before closing non empty brackets.
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
     // Defines space handling after opening and before closing template string braces. Requires TypeScript >= 2.0.6.
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
     "workbench.iconTheme": "vs-seti"
 }
