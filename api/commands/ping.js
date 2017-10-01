@@ -1,6 +1,3 @@
-/**
- * Created by aletuna on 08/08/17.
- */
 exports.execute = function (args) {
     args.msg.channel.send("Pong!");
 };

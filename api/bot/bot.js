@@ -1,16 +1,18 @@
 const fs = require("fs");
-const cfg = require("../../config.js");
+const cfg = require("../../config");
 const pkg = require("../../package.json");
 const discord = require("discord.js");
 const bot = new discord.Client();
-let user_finder;
+let userstorage;
+let rolestorage;
 let parser;
 let dispatcher;
 
 exports.init = function () {
-    parser = require("../util/command_parser.js");
-    dispatcher = require("../commands/command_dispatcher.js");
-    user_finder = require("../util/user_finder");
+    parser = require("../util/command_parser");
+    dispatcher = require("../commands/command_dispatcher");
+    userstorage = require("../util/userstorage");
+    rolestorage = require("../util/rolestorage");
 };
 
 exports.getBot = function () {
@@ -19,18 +21,23 @@ exports.getBot = function () {
 
 bot.on("message", msg => parser.parse_and_dispatch(msg));
 
-bot.login(cfg.token).then(
-    () => {
+bot.login(cfg.token)
+    .then(() => {
         console.log("Running!");
         console.log(bot.user);
 
-        user_finder.find_user_by_name("aletuna").then(user => {
-            console.log(user);
-        });;
+        rolestorage.getRoleByRank(4)
+            .then(role => {
+                console.log(role);
+            })
+            .catch(error => {
+                console.log(error);
+            });
 
         //setupGuide(); TODO: Implement again
-    }
-);
+    })
+    .catch(error => {
+    });
 
 function setupGuide() {
     let aCommands = dispatcher.getCommands();

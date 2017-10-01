@@ -1,7 +1,3 @@
-/**
- * Created by aletuna on 11/08/17.
- */
-
 const cmd_dispatcher = require("./command_dispatcher.js");
 const cfg = require("../../config.js");
 const pkg = require("../../package.json");

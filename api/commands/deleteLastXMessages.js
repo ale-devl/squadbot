@@ -1,8 +1,4 @@
 /**
- * Created by aletuna on 10/08/17.
- */
-
-/**
  * EXPORTS
  */
 

@@ -27,9 +27,10 @@ module.exports = {
         "squadmember": 9
     },
 
+    // NYI
     mysql: {
         url: process.env.mysqlUrl,
         user: process.env.mysqlUser,
-        password: process.env.mysqlPassword // Placeholder for development.
+        password: process.env.mysqlPassword
     }
 };

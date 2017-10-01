@@ -1,6 +1,3 @@
-/**
- * Created by aletuna on 08/08/17.
- */
 const bot = require("../bot/bot.js").getBot();
 
 exports.execute = function (args) {

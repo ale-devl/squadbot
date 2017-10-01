@@ -1,6 +1,3 @@
-/**
- * Created by aletuna on 08/08/17.
- */
 // This files purpose is to require all commands so we don't have to create a huge list in other files
 const oCommands = {
     help: require("./help.js"),
