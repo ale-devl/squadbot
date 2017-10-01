@@ -2,13 +2,16 @@ const fs         = require("fs");
 const cfg        = require("../../config.js");
 const pkg        = require("../../package.json");
 const discord    = require("discord.js");
-const parser     = require("../util/command_parser.js");
-const dispatcher = require("../commands/command_dispatcher.js");
 const bot        = new discord.Client();
+let user_finder;
+let parser;
+let dispatcher;
 
 exports.init = function ()
 {
-
+    parser      = require("../util/command_parser.js");
+    dispatcher  = require("../commands/command_dispatcher.js");
+    user_finder = require("../util/user_finder");
 };
 
 exports.getBot = function ()
@@ -23,7 +26,12 @@ bot.login(cfg.token).then(
     {
         console.log("Running!");
         console.log(bot.user);
-        setupGuide();
+
+        user_finder.find_user_by_name("aletuna").then(user => {
+            console.log(user);
+        });;
+        
+        //setupGuide(); TODO: Implement again
     }
 );
 

@@ -1,0 +1,69 @@
+{
+    // =========================================================================
+    // =========================================================================
+    // Editor settings
+    // =========================================================================
+    // Do not use duplicate style definitions
+    "css.lint.duplicateProperties": "warning",
+    "scss.lint.duplicateProperties": "warning",
+    "less.lint.duplicateProperties": "warning",
+    // Controls how the editor should render whitespace characters, posibilties
+    // are 'none', 'boundary', and 'all'. The 'boundary' option does not render single spaces between words.
+    "editor.renderWhitespace": "boundary",
+    // Controls whether the editor should render control characters
+    "editor.renderControlCharacters": true,
+    // Controls whether the editor should render indent guides
+    "editor.renderIndentGuides": false,
+    // Controls if suggestions should be accepted 'Enter' - in addition to 'Tab'.
+    // Helps to avoid ambiguity between inserting new lines or accepting suggestions.
+    "editor.acceptSuggestionOnEnter": "off",
+    // Insert snippets when their prefix matches.
+    // Works best when 'quickSuggestions' aren't enabled.
+    "editor.tabCompletion": true,
+    // Zoom the font of the editor when using mouse wheel and holding Ctrl.
+    "editor.mouseWheelZoom": false,
+    // Controls if the diff editor shows changes in leading or trailing whitespace as diffs
+    "diffEditor.ignoreTrimWhitespace": false,
+    // =========================================================================
+    // Integrated Terminal
+    // =========================================================================
+    // The proxy setting to use. If not set will be taken from the http_proxy
+    // and https_proxy environment variables
+    // Use bash as shell
+    "terminal.integrated.shell.osx": "/bin/bash",
+    "terminal.integrated.shellArgs.osx": [
+        "-l"
+    ],
+    "http.proxy": "http://proxy:8080",
+    // =========================================================================
+    // ESLint
+    // =========================================================================
+    // Controls whether eslint is enabled for JavaScript files or not.
+    "eslint.enable": true,
+    // Run the linter on save (onSave) or on type (onType)
+    "eslint.run": "onSave",
+    "window.zoomLevel": 0,
+    // =========================================================================
+    // HTML
+    // =========================================================================
+    // Maximum amount of characters per line (0 = disable).
+    "html.format.wrapLineLength": 0,
+    // Indent <head> and <body> sections.
+    "html.format.indentInnerHtml": true,
+    // Format and indent {{#foo}} and {{/foo}}.
+    "html.format.indentHandlebars": true,
+    // List of tags, comma separated, that should have an extra newline before them. 'null' defaults to "head, body, /html".
+    "html.format.extraLiners": "head, body, /html",
+    // =========================================================================
+    // TypeScript/JavaScript
+    // =========================================================================
+    // Enable/disable default JavaScript formatter.
+    "javascript.format.enable": true,
+    // Defines space handling after opening and before closing non empty parenthesis.
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
+    // Defines space handling after opening and before closing non empty brackets.
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
+    // Defines space handling after opening and before closing template string braces. Requires TypeScript >= 2.0.6.
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
+    "workbench.iconTheme": "vs-seti"
+}

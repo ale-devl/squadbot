@@ -12,8 +12,6 @@ exports.execute = function (args)
     let iAmount  = args.arguments[0];
     let oChannel = args.msg.channel;
 
-    //amount = amount + 2;
-    // get messages
     args.msg.delete()
         .then(() => deleteMessages(oChannel, iAmount));
 };

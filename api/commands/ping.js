@@ -2,16 +2,16 @@
  * Created by aletuna on 08/08/17.
  */
 exports.execute = function(args) {
-    args.msg.channel.send("WHO YA CALLIN A FOO, FOO?");
+    args.msg.channel.send("Pong!");
 };
 
 exports.getDescription = function ()
 {
     return {
-        name: "foo",
-        desc: "You know what it does....",
+        name: "ping",
+        desc: "Ping Pong. No further description needed!",
         args: [],
-        example: "-sb foo"
+        example: "> ping"
     };
 };
 

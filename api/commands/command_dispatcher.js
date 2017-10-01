@@ -4,9 +4,10 @@
 // This files purpose is to require all commands so we don't have to create a huge list in other files
 const oCommands = {
     help:           require("./help.js"),
-    foo:            require("./foo.js"),
+    ping:           require("./ping.js"),
     deleteLast:     require("./deleteLastXMessages.js"),
-    getLunchMenu:   require("./getLunchMenu.js")
+    promote:        require("./promote.js"),
+    degrade:        require("./degrade.js")
 };
 
 exports.execute = function (cmd)
