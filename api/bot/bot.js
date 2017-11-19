@@ -64,8 +64,10 @@ function setupGuide() {
 function loadConfig() {
     db.then(connection => {
         connection.query("SELECT * FROM adminRoles", (err, rows) => {
-            for (let i = 0; i < rows.length; ++i) {
-                cfg.settings.adminRoles.push(rows[i].id);
+            if (rows) {
+                for (let i = 0; i < rows.length; ++i) {
+                    cfg.settings.adminRoles.push(rows[i].id);
+                }
             }
         });
     });
