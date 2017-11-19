@@ -22,7 +22,7 @@ exports.getBot = function () {
     return bot;
 };
 
-exports.getGuildId = function() {
+exports.getGuildId = function () {
     return cfg.settings.guildId;
 }
 
@@ -32,14 +32,6 @@ bot.login(cfg.token)
     .then(() => {
         console.log("Running!");
         console.log(bot.user);
-
-        rolestorage.getRoleByRank(4)
-            .then(role => {
-                console.log(role);
-            })
-            .catch(error => {
-                console.log(error);
-            });
 
         //setupGuide(); TODO: Implement again
     })
@@ -72,7 +64,7 @@ function setupGuide() {
 function loadConfig() {
     db.then(connection => {
         connection.query("SELECT * FROM adminRoles", (err, rows) => {
-            for(let i = 0; i < rows.length; ++i) {
+            for (let i = 0; i < rows.length; ++i) {
                 cfg.settings.adminRoles.push(rows[i].id);
             }
         });
