@@ -4,11 +4,11 @@
 
 exports.execute = function (args) {
     // Only first input is considered
-   /* let iAmount = args.arguments[0];
-    let oChannel = args.msg.channel;
-
-    args.msg.delete()
-        .then(() => deleteMessages(oChannel, iAmount));*/
+    /* let iAmount = args.arguments[0];
+     let oChannel = args.msg.channel;
+ 
+     args.msg.delete()
+         .then(() => deleteMessages(oChannel, iAmount));*/
     args.msg.channel.send("Command currently disabled!");
 };
 

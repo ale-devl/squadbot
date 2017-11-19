@@ -53,7 +53,7 @@ function getNewUser(name) {
         let guild = bot.getBot().guilds.find("id", bot.getGuildId());
         let user = {};
         let member = guild.members.filter(member => {
-            if(member.nickname) {
+            if (member.nickname) {
                 return member.nickname.toUpperCase() === name ? true : false;
             } else {
                 return member.user.username.toUpperCase() === name ? true : false;

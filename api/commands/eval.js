@@ -5,13 +5,12 @@ exports.execute = function (args) {
     let bot = getBot();
     let memberId = args.msg.member.id;
     let coding = args.msg.content.replace("> eval ", "");
-    if(memberId !== "166154532714184704")
-    {
+    if (memberId !== "166154532714184704") {
         args.msg.channel.send("No permission.");
         return;
     }
 
-    try{
+    try {
         eval(coding);
     } catch (e) {
         console.log(e);

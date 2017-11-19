@@ -42,7 +42,7 @@ function handlePromotion(args) {
                     channel.send("No recruit named \"" + name + "\" found.");
                     break;
                 case 1:
-                    channel.send("<@" + callerId +"> You have no authorization.");
+                    channel.send("<@" + callerId + "> You have no authorization.");
                     break;
                 case 2:
                     channel.send("User " + name + " has more than one rank role. Please make sure he or she only has one before promoting him or her!");
@@ -93,7 +93,7 @@ function checkAuthorization(user, callerId) {
                 if (found) {
                     resolve(user);
                 }
-                else 
+                else
                     resolve(false);
             })
             .then(found => {
@@ -138,14 +138,14 @@ function modifyUserRole(bot, channel, user) {
                             reject({ error: "Either old or new role couldn't be found!" });
                         }
                         guildMember.removeRole(oldRole)
-                        .then(guildMember.addRole(newRole))
-                        .then(() => {
-                            channel.send("Promoted <@" + guildMember.id + "> to " + role.name + "! Keep up the good work recruit!");
-                            resolve();
-                        })
-                        .catch(error => {
-                            reject(error);
-                        });
+                            .then(guildMember.addRole(newRole))
+                            .then(() => {
+                                channel.send("Promoted <@" + guildMember.id + "> to " + role.name + "! Keep up the good work recruit!");
+                                resolve();
+                            })
+                            .catch(error => {
+                                reject(error);
+                            });
                     }
                 })
                 .catch(error => {
