@@ -6,7 +6,8 @@ exports.parse_and_dispatch = function (msg) {
         sCommand,
         aArguments = [],
         bUsesArguments,
-        oCmdWithArgs = {};
+        oCmdWithArgs = {},
+        originalArg = "";
 
     if (aContent[0] !== cfg.prefix) {
         // No prefix. Nothing to do here.

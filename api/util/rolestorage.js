@@ -56,7 +56,8 @@ exports.getRoleById = function (id) {
                     return;
                 }
                 if (!row) {
-                    reject({ error: "No role found for id: " + id });
+                    // Nothing returned when nothing is found. Makes sense, huh?
+                    resolve();
                     return;
                 }
                 let role = {
@@ -90,7 +91,7 @@ exports.getRoleByRank = function (rank) {
                     return;
                 }
                 if (!row) {
-                    reject({ error: "No role found for rank: " + rank });
+                    resolve();
                     return;
                 }
                 let role = {
@@ -103,5 +104,50 @@ exports.getRoleByRank = function (rank) {
                 resolve(role);
             });
         });
+    });
+};
+
+exports.getRoleByLowestRank = function () {
+    // Check the cache
+    return new Promise((resolve, reject) => {
+
+        // If we arrive at this point we didn't find the requested role in our local Cache. Let's look in the database instead.
+        db.then(connection => {
+            connection.one("SELECT * FROM roles WHERE rank = (SELECT MAX(rank) FROM roles)", (err, row) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                if (!row) {
+                    reject({ error: "Couldn't get lowest rankrole" });
+                    return;
+                }
+                let role = {
+                    id: row.id,
+                    name: row.name,
+                    exactname: row.exact_name,
+                    rank: row.rank
+                };
+                roles[row.name] = role;
+                resolve(role);
+            });
+        });
+    });
+};
+
+exports.checkAuthorizationForRoleIds = function (ids) {
+    return new Promise((resolve, reject) => {
+        if (ids.length === 0) {
+            resolve(false);
+        }
+
+        db.then(connection => {
+            connection.one("SELECT * FROM adminRoles WHERE id = ?", ids, (err, row) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(row ? true : false);
+            })
+        })
     });
 };

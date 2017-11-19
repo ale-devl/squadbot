@@ -1,3 +1,5 @@
+const mysqlHandler = require("../util/mysql_handler");
+const db = mysqlHandler.getConnection();
 const fs = require("fs");
 const cfg = require("../../config");
 const pkg = require("../../package.json");
@@ -9,6 +11,7 @@ let parser;
 let dispatcher;
 
 exports.init = function () {
+    loadConfig();
     parser = require("../util/command_parser");
     dispatcher = require("../commands/command_dispatcher");
     userstorage = require("../util/userstorage");
@@ -18,6 +21,10 @@ exports.init = function () {
 exports.getBot = function () {
     return bot;
 };
+
+exports.getGuildId = function() {
+    return cfg.settings.guildId;
+}
 
 bot.on("message", msg => parser.parse_and_dispatch(msg));
 
@@ -60,4 +67,14 @@ function setupGuide() {
 
     channel.fetchMessage("313942220933693441")
         .then(message => message.edit(sGuide));
+}
+
+function loadConfig() {
+    db.then(connection => {
+        connection.query("SELECT * FROM adminRoles", (err, rows) => {
+            for(let i = 0; i < rows.length; ++i) {
+                cfg.settings.adminRoles.push(rows[i].id);
+            }
+        });
+    });
 }

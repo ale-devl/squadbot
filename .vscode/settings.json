@@ -38,10 +38,7 @@
     // =========================================================================
     // ESLint
     // =========================================================================
-    // Controls whether eslint is enabled for JavaScript files or not.
-    "eslint.enable": true,
-    // Run the linter on save (onSave) or on type (onType)
-    "eslint.run": "onSave",
+
     "window.zoomLevel": 0,
     // =========================================================================
     // HTML

@@ -15,16 +15,9 @@ module.exports = {
     token: process.env.squadbotToken,
 
     // This will be done dynamically. Just a infodump
-    ranks: {
-        "marshal": 1,
-        "general": 2,
-        "colonel": 3,
-        "major": 4,
-        "captain": 5,
-        "lieutenant": 6,
-        "sergent": 7,
-        "scout": 8,
-        "squadmember": 9
+    settings: {
+        adminRoles: [],
+        guildId: "290169405265149962"
     },
 
     // NYI

@@ -32,7 +32,8 @@ function createConnection() {
         connection.on("error", function (err) {
             if (err.code === "PROTOCOL_CONNECTION_LOST") { // Connection to the MySQL server is usually
                 createConnection();                       // lost due to either server restart, or a
-            } else {                                      // connection idle timeout (the wait_timeout
+            } else {
+                console.log(err.code);                    // connection idle timeout (the wait_timeout
                 throw err;                                // server variable configures this)
             }
         });
