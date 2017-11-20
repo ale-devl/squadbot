@@ -25,6 +25,6 @@ module.exports = {
         url: process.env.mysqlUrl,
         user: process.env.mysqlUser,
         password: process.env.mysqlPassword,
-        database: proceess.env.mysqlDB
+        database: process.env.mysqlDB
     }
 };
