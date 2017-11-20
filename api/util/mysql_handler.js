@@ -18,6 +18,15 @@ exports.getConnection = function () {
         } else {
             createConnection().then(() => {
                 resolve(db);
+            })
+            .catch((error) => {
+                // Something went wrong. Let's try one more time before panicking
+                createConnection().then(() => {
+                    resolve(db);
+                })
+                .catch((error) => {
+                    reject(error);
+                })
             });
         }
     });
