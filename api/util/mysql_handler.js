@@ -3,7 +3,7 @@ const mysqlSettings = {
     host: process.env.mysqlUrl,
     user: process.env.mysqlUser,
     password: process.env.mysqlPassword,
-    database: "squadbot",
+    database: process.env.mysqlDb,
     multipleStatements: false
 };
 const nodeSql = require("nodesql");
