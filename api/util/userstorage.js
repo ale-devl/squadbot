@@ -26,7 +26,6 @@ exports.getUserByName = function (name) {
                     resolve(user);
                 })
                 .catch((error) => {
-                    error.action = 0;
                     reject(error);
                 });
         }
@@ -54,11 +53,21 @@ function getNewUser(name) {
         let user = {};
         let member = guild.members.filter(member => {
             if (member.nickname) {
-                return member.nickname.toUpperCase() === name ? true : false;
+                return member.nickname.toUpperCase().indexOf(name.toUpperCase()) !== -1 ? true : false;
             } else {
-                return member.user.username.toUpperCase() === name ? true : false;
+                return member.user.username.toUpperCase().indexOf(name.toUpperCase()) !== -1 ? true : false;
             }
-        }).first();
+        });
+
+        if (member.size > 1) {
+            let members = [];
+            member.forEach(item => {
+                members.push(item.nickname ? item.nickname : item.user.username);
+            });
+            reject({ action: 0, error: "More than one user found.", members: members });
+        }
+
+        else member = member.first();
 
         if (member) {
             user.id = member.user.id;
@@ -68,6 +77,6 @@ function getNewUser(name) {
             resolve(user);
         }
 
-        reject({ error: "No user found" });
+        reject({ action: 1, error: "No user found" });
     });
 };

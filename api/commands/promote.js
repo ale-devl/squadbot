@@ -39,12 +39,15 @@ function handlePromotion(args) {
         .catch(error => {
             switch (error.action) {
                 case 0:
-                    channel.send("No recruit named \"" + name + "\" found.");
+                    channel.send("More than one Users found for name: " + name + ". Please be more specific! Found members: " + error.members);
                     break;
                 case 1:
-                    channel.send("<@" + callerId + "> You have no authorization.");
+                    channel.send("No recruit named \"" + name + "\" found.");
                     break;
                 case 2:
+                    channel.send("<@" + callerId + "> You have no authorization.");
+                    break;
+                case 3:
                     channel.send("User " + name + " has more than one rank role. Please make sure he or she only has one before promoting him or her!");
                     break;
                 default:
@@ -59,30 +62,34 @@ function findRelevantRole(user) {
         let userroles = user.roles;
         let aRoles = [];
         let counter = 0;
-        userroles.forEach(item => {
-            rolestorage.getRoleById(item)
-                .then(role => {
-                    counter++;
-                    if (role) {
-                        aRoles.push(role);
-                    }
-                    if (counter === userroles.length) {
-                        if (aRoles.length > 1) {
-                            // We have more than one role. This smells like a corrupted user that needs manual fixing.
-                            reject({ action: 2, error: "More than one rank-role found. Manual fixing needed!" });
-                        } else if (aRoles.length === 1) {
-                            user.rankrole = aRoles[0];
-                            resolve(user);
-                        } else {
-                            resolve(user);
+        if (userroles.length !== 0) {
+            userroles.forEach(item => {
+                rolestorage.getRoleById(item)
+                    .then(role => {
+                        counter++;
+                        if (role) {
+                            aRoles.push(role);
                         }
-                    }
-                })
-                .catch(error => {
-                    // No role found. Nothing to do here.
-                    reject(error);
-                });
-        });
+                        if (counter === userroles.length) {
+                            if (aRoles.length > 1) {
+                                // We have more than one role. This smells like a corrupted user that needs manual fixing.
+                                reject({ action: 3, error: "More than one rank-role found. Manual fixing needed!" });
+                            } else if (aRoles.length === 1) {
+                                user.rankrole = aRoles[0];
+                                resolve(user);
+                            } else {
+                                resolve(user);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        // No role found. Nothing to do here.
+                        reject(error);
+                    });
+            });
+        } else {
+            resolve(user);
+        }
     });
 }
 
@@ -100,7 +107,7 @@ function checkAuthorization(user, callerId) {
                 if (found) {
                     resolve(user);
                 } else {
-                    reject({ action: 1, error: "No authorization" });
+                    reject({ action: 2, error: "No authorization" });
                 }
             });
     })
@@ -115,12 +122,25 @@ function modifyUserRole(bot, channel, user) {
             rolestorage.getRoleByLowestRank()
                 .then(role => {
                     let newRole = guild.roles.find(val => val.id === role.id);
+                    let newNick = "";
+                    let oldNick = guildMember.nickname ? guildMember.nickname : guildMember.user.username;
+
+                    if (oldNick.indexOf(role.name) !== -1) {
+                        newNick = role.name + " " + oldNick;
+                    } else {
+                        newNick = role.name + " " + oldNick;
+                    }
+
                     if (!newRole) {
                         reject({ error: "New role couldn't be found!" });
                     }
+
                     guildMember.addRole(newRole);
-                    channel.send("Welcome to the squad <@" + guildMember.id + ">! You new rank is:  " + role.name + "! Now get out there and make me proud!");
-                    resolve();
+                    channel.send("Welcome to the squad <@" + guildMember.id + ">! You new rank is:  " + role.name.toUpperCase() + "! Now get out there and make me proud!")
+                        .then(() => {
+                            guildMember.setNickname(newNick);
+                            resolve();
+                        });
                 })
                 .catch(error => {
                     console.log(error);
@@ -134,14 +154,26 @@ function modifyUserRole(bot, channel, user) {
                     if (role) {
                         let oldRole = guild.roles.find(val => val.id === user.rankrole.id);
                         let newRole = guild.roles.find(val => val.id === role.id);
+                        let newNick = "";
+
                         if (!oldRole || !newRole) {
                             reject({ error: "Either old or new role couldn't be found!" });
                         }
+
+                        if (guildMember.nickname && guildMember.nickname.indexOf(user.rankrole.name) !== -1) {
+                            newNick = guildMember.nickname.replace(user.rankrole.name, role.name);
+                        } else {
+                            newNick = role.name + " " + guildMember.user.username;
+                        }
+
                         guildMember.removeRole(oldRole)
                             .then(guildMember.addRole(newRole))
                             .then(() => {
-                                channel.send("Promoted <@" + guildMember.id + "> to " + role.name + "! Keep up the good work recruit!");
-                                resolve();
+                                channel.send("Promoted <@" + guildMember.id + "> to " + role.name + "! Keep up the good work recruit!")
+                                    .then(() => {
+                                        guildMember.setNickname(newNick);
+                                        resolve();
+                                    });
                             })
                             .catch(error => {
                                 reject(error);

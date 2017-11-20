@@ -35,9 +35,12 @@ function handleDegrade(args) {
         .catch(error => {
             switch (error.action) {
                 case 0:
-                    channel.send("No recruit named \"" + name + "\" found.");
+                    channel.send("More than one Users found for name: " + name + ". Please be more specific! Found members: " + error.members);
                     break;
                 case 1:
+                    channel.send("No recruit named \"" + name + "\" found.");
+                    break;
+                case 2:
                     channel.send("User " + name + " has more than one rank role. Please make sure he only has one before promoting him!");
                     break;
                 default:
@@ -61,7 +64,7 @@ function checkAuthorization(user, callerId) {
                 if (found) {
                     resolve(user);
                 } else {
-                    reject({ action: 1, error: "No authorization" });
+                    reject({ action: 2, error: "No authorization" });
                 }
             });
     })
@@ -79,28 +82,51 @@ function modifyUserRole(bot, channel, user) {
             rolestorage.getRoleByRank(user.rankrole.rank + 1)
                 .then(role => {
                     let oldRole = guild.roles.find(val => val.id === user.rankrole.id);
+                    let newRank = "";
+                    let newNick = "";
+                    let oldNick = guildMember.nickname ? guildMember.nickname : guildMember.user.username;
+
+                    if (role) {
+                        newRank = role.name;
+
+                        if (oldNick.indexOf(user.rankrole.name) !== -1) {
+                            newNick = oldNick.replace(user.rankrole.name, role.name);
+                        } else {
+                            newNick = role.name + " " + oldNick;
+                        }
+                    } else {
+                        newRank = "nothing";
+
+                        if (oldNick.indexOf(user.rankrole.name) !== -1) {
+                            newNick = oldNick.replace(user.rankrole.name + " ", "");
+                        } else {
+                            newNick = oldNick;
+                        }
+                    }
+
                     guildMember.removeRole(oldRole)
                         .then(() => {
-                            let newRank = role ? role.name : "nothing";
-                            channel.send("Degraded <@" + guildMember.id + "> to " + newRank + "! Son, I am disappoint.");
-                            if (!role) {
+                            channel.send("Degraded <@" + guildMember.id + "> to " + newRank.toUpperCase() + "! Son, I am disappoint.")
+                                .then(() => {
+                                    guildMember.setNickname(newNick);
+                                });
+
+                            if (role) {
+                                let newRole = guild.roles.find(val => val.id === role.id);
+                                guildMember.addRole(newRole)
+                                    .then(() => {
+                                        resolve();
+                                    })
+                                    .catch(error => {
+                                        reject(error);
+                                    });
+                            } else {
                                 resolve();
                             }
                         })
                         .catch(error => {
                             reject(error);
                         });
-
-                    if (role) {
-                        let newRole = guild.roles.find(val => val.id === role.id);
-                        guildMember.addRole(newRole)
-                            .then(() => {
-                                resolve();
-                            })
-                            .catch(error => {
-                                reject(error);
-                            });
-                    }
 
                 })
                 .catch(error => {
@@ -115,30 +141,34 @@ function findRelevantRole(user) {
         let userroles = user.roles;
         let aRoles = [];
         let counter = 0;
-        userroles.forEach(item => {
-            rolestorage.getRoleById(item)
-                .then(role => {
-                    counter++;
-                    if (role) {
-                        aRoles.push(role);
-                    }
-                    if (counter === userroles.length) {
-                        if (aRoles.length > 1) {
-                            // We have more than one role. This smells like a corrupted user that needs manual fixing.
-                            reject({ action: 2, error: "More than one rank-role found. Manual fixing needed!" });
-                        } else if (aRoles.length === 1) {
-                            user.rankrole = aRoles[0];
-                            resolve(user);
-                        } else {
-                            resolve(user);
+        if (userroles.length !== 0) {
+            userroles.forEach(item => {
+                rolestorage.getRoleById(item)
+                    .then(role => {
+                        counter++;
+                        if (role) {
+                            aRoles.push(role);
                         }
-                    }
-                })
-                .catch(error => {
-                    // No role found. Nothing to do here.
-                    reject(error);
-                });
-        });
+                        if (counter === userroles.length) {
+                            if (aRoles.length > 1) {
+                                // We have more than one role. This smells like a corrupted user that needs manual fixing.
+                                reject({ action: 2, error: "More than one rank-role found. Manual fixing needed!" });
+                            } else if (aRoles.length === 1) {
+                                user.rankrole = aRoles[0];
+                                resolve(user);
+                            } else {
+                                resolve(user);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        // No role found. Nothing to do here.
+                        reject(error);
+                    });
+            });
+        } else {
+            resolve(user);
+        }
     });
 }
 
