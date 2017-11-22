@@ -24,8 +24,8 @@ module.exports = {
     // This will be done dynamically. Just a infodump -> Is this comment outdated?
     settings: {
         adminRoles: [],
-        guildId: "290169405265149962",
-        botCmdId: "381861016914624515"
+        guildId: "290169405265149962", // Local: 361929815483482112
+        botCmdId: "381861016914624515" // Local: 361929815483482114
     },
 
     // NYI
