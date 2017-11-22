@@ -28,7 +28,15 @@ exports.getGuildId = function () {
     return cfg.settings.guildId;
 }
 
+exports.lockBot = function(channel) {
+    missingPermissions = true;
+    channel.send("There were missing permissions. Bot is on **lockdown** until the problems are solved. Use '> checkpermission' to trigger a recheck.");
+}
+
 bot.on("message", msg => {
+    if(msg.author.id === "382188595051757571")
+        return;
+        
     if (missingPermissions) {
         if (msg.content === "> checkpermission")
             checkPermissions(msg.channel, true);
@@ -112,7 +120,7 @@ function checkPermissions(channel, informAboutOutcome = false) {
                     channel.send("Still got missing permissions. Check previous messages! Bot remains locked.");
             } else {
                 if(missingPermissions)
-                    channel.send("There were missing permissions. Bot is on lockdown until the problems are solved. Use '> checkpermission' to trigger a recheck.");
+                    channel.send("There were missing permissions. Bot is on **lockdown** until the problems are solved. Use '> checkpermission' to trigger a recheck.");
             }
 
             console.log("Checking permissions done.");

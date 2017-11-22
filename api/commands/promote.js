@@ -176,7 +176,7 @@ function modifyUserRole(bot, channel, user) {
                                     });
                             })
                             .catch(error => {
-                                sendPrivError(error, cahnnel, "remove Role");
+                                sendPrivError(error, channel, "remove Role");
                                 reject(error);
                             });
                     }
@@ -192,6 +192,7 @@ function sendPrivError(error, channel, action) {
     console.error("CRITICAL ERROR: Missing Permissions for action. Action: " + action);
     console.error(error);
     channel.send("Missing priviledges to '" + action + "'. Please check bot role and/or hierarchy!");
+    bot.lockBot(channel);
 }
 
 exports.isUsingArguments = function () {
