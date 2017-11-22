@@ -34,7 +34,7 @@ exports.lockBot = function(channel) {
 }
 
 bot.on("message", msg => {
-    if(msg.author.id === "382188595051757571")
+    if(msg.author.id === bot.user.id)
         return;
         
     if (missingPermissions) {
