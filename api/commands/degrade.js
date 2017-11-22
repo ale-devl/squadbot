@@ -108,7 +108,7 @@ function modifyUserRole(bot, channel, user) {
                         .then(() => {
                             channel.send("Degraded <@" + guildMember.id + "> to " + newRank.toUpperCase() + "! Son, I am disappoint.")
                                 .then(() => {
-                                    guildMember.setNickname(newNick);
+                                    guildMember.setNickname(newNick).catch(error => sendPrivError(error, channel, "set Nickname"));
                                 });
 
                             if (role) {
@@ -118,13 +118,15 @@ function modifyUserRole(bot, channel, user) {
                                         resolve();
                                     })
                                     .catch(error => {
-                                        reject(error);
+                                        sendPrivError(error, channel, "add Role");
+                                        reject();
                                     });
                             } else {
                                 resolve();
                             }
                         })
                         .catch(error => {
+                            sendPrivError(error, channel, "remove Role");
                             reject(error);
                         });
 
@@ -170,6 +172,12 @@ function findRelevantRole(user) {
             resolve(user);
         }
     });
+}
+
+function sendPrivError(error, channel, action) {
+    console.error("CRITICAL ERROR: Missing Permissions for action. Action: " + action);
+    console.error(error);
+    channel.send("Missing priviledges to '" + action + "'. Please check bot role and/or hierarchy!");
 }
 
 exports.isUsingArguments = function () {

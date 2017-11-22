@@ -14,10 +14,18 @@ module.exports = {
     // Then create a new application and grab your token.
     token: process.env.squadbotToken,
 
-    // This will be done dynamically. Just a infodump
+    // Required permissions
+    permissions: [
+        "MANAGE_NICKNAMES",
+        "SEND_MESSAGES",
+        "MANAGE_ROLES"
+    ],
+
+    // This will be done dynamically. Just a infodump -> Is this comment outdated?
     settings: {
         adminRoles: [],
-        guildId: "290169405265149962"
+        guildId: "290169405265149962",
+        botCmdId: "381861016914624515"
     },
 
     // NYI

@@ -135,10 +135,10 @@ function modifyUserRole(bot, channel, user) {
                         reject({ error: "New role couldn't be found!" });
                     }
 
-                    guildMember.addRole(newRole);
+                    guildMember.addRole(newRole).catch(error => sendPrivError(error, channel, "add Role"));
                     channel.send("Welcome to the squad <@" + guildMember.id + ">! You new rank is:  " + role.name.toUpperCase() + "! Now get out there and make me proud!")
                         .then(() => {
-                            guildMember.setNickname(newNick);
+                            guildMember.setNickname(newNick).catch(error => sendPrivError(error, channel, "set Nickname"));
                             resolve();
                         });
                 })
@@ -167,15 +167,16 @@ function modifyUserRole(bot, channel, user) {
                         }
 
                         guildMember.removeRole(oldRole)
-                            .then(guildMember.addRole(newRole))
+                            .then(guildMember.addRole(newRole).catch(error => sendPrivError(error, channel, "add Role")))
                             .then(() => {
                                 channel.send("Promoted <@" + guildMember.id + "> to " + role.name + "! Keep up the good work recruit!")
                                     .then(() => {
-                                        guildMember.setNickname(newNick);
+                                        guildMember.setNickname(newNick).catch(error => sendPrivError(error, channel, "set Nickname"));
                                         resolve();
                                     });
                             })
                             .catch(error => {
+                                sendPrivError(error, cahnnel, "remove Role");
                                 reject(error);
                             });
                     }
@@ -185,6 +186,12 @@ function modifyUserRole(bot, channel, user) {
                 });
         }
     });
+}
+
+function sendPrivError(error, channel, action) {
+    console.error("CRITICAL ERROR: Missing Permissions for action. Action: " + action);
+    console.error(error);
+    channel.send("Missing priviledges to '" + action + "'. Please check bot role and/or hierarchy!");
 }
 
 exports.isUsingArguments = function () {

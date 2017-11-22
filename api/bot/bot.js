@@ -5,6 +5,8 @@ const cfg = require("../../config");
 const pkg = require("../../package.json");
 const discord = require("discord.js");
 const bot = new discord.Client();
+
+let missingPermissions;
 let userstorage;
 let rolestorage;
 let parser;
@@ -26,10 +28,20 @@ exports.getGuildId = function () {
     return cfg.settings.guildId;
 }
 
-bot.on("message", msg => parser.parse_and_dispatch(msg));
+bot.on("message", msg => {
+    if (missingPermissions) {
+        if (msg.content === "> checkpermission")
+            checkPermissions(msg.channel, true);
+        else
+            msg.channel.send("Bot locked due to missing permissions. Use '> checkpermission' to retrigger the check and unlock the bot if permissions are fixed");
+    }
+    else
+        parser.parse_and_dispatch(msg);
+});
 
 bot.login(cfg.token)
     .then(() => {
+        checkPermissions();
         console.log("Running!");
         console.log(bot.user);
 
@@ -71,4 +83,38 @@ function loadConfig() {
             }
         });
     });
+}
+
+function checkPermissions(channel, informAboutOutcome = false) {
+    console.log("Checking permission..");
+    let guild = bot.guilds.find("id", cfg.settings.guildId);
+    channel = channel || guild.channels.find("id", cfg.settings.botCmdId);
+    missingPermissions = false;
+
+    cfg.permissions.forEach(permission => {
+        if (!guild.me.hasPermission(permission)) {
+            channel.send("Permission check: Missing permission '" + permission + "'!");
+            missingPermissions = true;
+        }
+    });
+
+    rolestorage.getRoleByHighestRank()
+        .then(role => {
+            if (guild.roles.find("id", role.id).position > guild.me.highestRole.position) {
+                channel.send("Permission check: Not high enough in the hierarchy!");
+                missingPermissions = true;
+            }
+
+            if (informAboutOutcome) {
+                if (!missingPermissions)
+                    channel.send("All required permissions present. Bot unlocked!");
+                else
+                    channel.send("Still got missing permissions. Check previous messages! Bot remains locked.");
+            } else {
+                if(missingPermissions)
+                    channel.send("There were missing permissions. Bot is on lockdown until the problems are solved. Use '> checkpermission' to trigger a recheck.");
+            }
+
+            console.log("Checking permissions done.");
+        });
 }

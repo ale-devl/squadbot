@@ -10,7 +10,7 @@
                 "run-script",
                 "debug"
             ],
-            "port": 5858
+            "port": 9229
         },
             {
                 "type": "node",
