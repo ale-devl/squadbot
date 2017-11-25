@@ -1,10 +1,10 @@
 const bot = require("../bot/bot.js");
 const userstorage = require("../util/userstorage");
 const rolestorage = require("../util/rolestorage");
+const authChecker = require("../util/auth_checker");
 
 exports.execute = function (args) {
-    // Workaround. Parser needs proper fixing
-    args.arguments = args.msg.content.replace(/> degrade /ig, "");
+    args.username = args.msg.content.replace(/> degrade /ig, "");
     handleDegrade(args);
 };
 
@@ -14,7 +14,7 @@ exports.getDescription = function () {
         desc: "Degrades someone.",
         args: [{
             name: 'name',
-            desc: 'Name of the guy that disappointed you. Note: For now the name has to be -exact-. I will simplify that later.',
+            desc: 'Name of the Member that disappointed you. Partial Name is possible but must be unique.',
             type: 'string',
             required: true
         }],
@@ -22,16 +22,20 @@ exports.getDescription = function () {
     };
 };
 
+exports.isUsingArguments = function () {
+    return false;
+};
+
 function handleDegrade(args) {
-    let name = args.arguments;
+    let name = args.username;
     let channel = args.msg.channel;
     let callerId = args.msg.member.id;
-    currentChannel = channel;
+    let guild = args.msg.guild;
 
-    userstorage.getUserByName(name)
+    authChecker.checkAuthorization(callerId)
+        .then(() => userstorage.getUserByName(name))
         .then(user => findRelevantRole(user))
-        .then(user => checkAuthorization(user, callerId))
-        .then(user => modifyUserRole(bot, channel, user))
+        .then(user => modifyUserRole(guildbot, channel, user))
         .catch(error => {
             switch (error.action) {
                 case 0:
@@ -50,29 +54,8 @@ function handleDegrade(args) {
         });
 }
 
-function checkAuthorization(user, callerId) {
+function modifyUserRole(guild, channel, user) {
     return new Promise((resolve, reject) => {
-        userstorage.checkAuthorizationForId(callerId)
-            .then(found => {
-                if (found) {
-                    resolve(user);
-                }
-                else
-                    resolve(false);
-            })
-            .then(found => {
-                if (found) {
-                    resolve(user);
-                } else {
-                    reject({ action: 2, error: "No authorization" });
-                }
-            });
-    })
-}
-
-function modifyUserRole(bot, channel, user) {
-    return new Promise((resolve, reject) => {
-        let guild = bot.getBot().guilds.find(val => val.id === bot.getGuildId());
         let guildMember = guild.members.find(val => val.id === user.id);
 
         if (!user.rankrole) {
@@ -180,7 +163,3 @@ function sendPrivError(error, channel, action) {
     channel.send("Missing priviledges to '" + action + "'. Please check bot role and/or hierarchy!");
     bot.lockBot(channel);
 }
-
-exports.isUsingArguments = function () {
-    return false;
-};

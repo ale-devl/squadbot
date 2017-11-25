@@ -5,7 +5,9 @@ const oCommands = {
     deleteLast: require("./deleteLastXMessages"),
     promote: require("./promote"),
     degrade: require("./degrade"),
-    eval: require("./eval")
+    eval: require("./eval"),
+    rename: require("./rename"),
+    fixname: require("./fixName")
 };
 
 exports.execute = function (cmd) {

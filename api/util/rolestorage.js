@@ -7,6 +7,22 @@ const db = mysqlHandler.getConnection();
 
 // Local cache
 let roles = {};
+exports.getRoleNames = function () {
+    return new Promise((resolve, reject) => {
+        let roles = [];
+        db.then(connection => {
+            connection.query("SELECT name FROM roles;", (err, rows) => {
+                if (err)
+                    reject(err);
+
+                rows.forEach(row => {
+                    roles.push(row.name);
+                });
+                resolve(roles);
+            });
+        });
+    })
+};
 
 exports.getRoleByName = function (name) {
     name = name.toUpperCase();
