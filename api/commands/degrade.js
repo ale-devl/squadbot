@@ -35,7 +35,7 @@ function handleDegrade(args) {
     authChecker.checkAuthorization(callerId)
         .then(() => userstorage.getUserByName(name))
         .then(user => findRelevantRole(user))
-        .then(user => modifyUserRole(guildbot, channel, user))
+        .then(user => modifyUserRole(guild, channel, user))
         .catch(error => {
             switch (error.action) {
                 case 0:
