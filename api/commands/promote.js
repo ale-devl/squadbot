@@ -94,7 +94,7 @@ function findRelevantRole(user) {
     });
 }
 
-function modifyUserRole(guild7, channel, user) {
+function modifyUserRole(guild, channel, user) {
     return new Promise((resolve, reject) => {
         let guildMember = guild.members.find(val => val.id === user.id);
 
