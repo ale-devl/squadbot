@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "None.",
   "main": "index.js",
   "scripts": {
