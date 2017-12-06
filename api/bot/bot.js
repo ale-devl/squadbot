@@ -12,6 +12,15 @@ let rolestorage;
 let parser;
 let dispatcher;
 
+process.on('uncaughtException', err => {
+    console.log("Uncaught Exception: " + err);
+    console.log('Logging out of Discord and then quitting process...');
+    bot.destroy()
+        .then(() => {
+            process.exit(1);
+        });
+});
+
 exports.init = function () {
     loadConfig();
     parser = require("../util/command_parser");
