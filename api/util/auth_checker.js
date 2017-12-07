@@ -6,13 +6,6 @@ exports.checkAuthorization = function(callerId) {
             .then(found => {
                 if (found) {
                     resolve();
-                }
-                else
-                    resolve(false);
-            })
-            .then(found => {
-                if (found) {
-                    resolve();
                 } else {
                     reject({ action: 2, error: "No authorization" });
                 }
