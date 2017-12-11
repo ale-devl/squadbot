@@ -28,7 +28,6 @@ module.exports = {
         botCmdId: "381861016914624515" // Local: 361929815483482114
     },
 
-    // NYI
     mysql: {
         url: process.env.mysqlUrl,
         user: process.env.mysqlUser,

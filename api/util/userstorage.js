@@ -54,7 +54,7 @@ function getNewUser(name) {
         let member = guild.members.filter(member => {
             if (member.nickname) {
                 return member.nickname.toUpperCase().indexOf(name.toUpperCase()) !== -1 ? true : false;
-            } else {7
+            } else {
                 return member.user.username.toUpperCase().indexOf(name.toUpperCase()) !== -1 ? true : false;
             }
         });

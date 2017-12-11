@@ -102,6 +102,17 @@ function loadConfig() {
             }
         });
     });
+
+    if( !process.env.squadbotToken || !process.env.mysqlUser || !process.env.mysqlUrl || !process.env.mysqlPassword || !process.env.mysqlDB)
+    {
+        console.error("ERROR: Missing some Environmental variable!");
+        console.error("squadbotToken: " + process.env.squadbotToken);
+        console.error("mysqlUser: " + process.env.mysqlUser);
+        console.error("mysqlUrl: " + process.env.mysqlUrl);
+        console.error("mysqlPassword: " + process.env.mysqlPassword);
+        console.error("mysqlDB: " + process.env.mysqlDB);
+        nop.forceException();
+    }
 }
 
 function checkPermissions(channel, informAboutOutcome = false) {
