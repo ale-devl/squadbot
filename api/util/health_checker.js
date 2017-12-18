@@ -4,7 +4,7 @@ const cfg = require("../../config");
 const rolestorage = require("../util/rolestorage");
 
 exports.registerHealthChecks = function (interval) {
-    console.log("Registered Healthchecks with interval: " + interval);
+    console.log("Registered Healthchecks with interval: " + interval / 1000 + " seconds.");
     setTimeout(performHealthCheck, interval, interval);
 };
 
