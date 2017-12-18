@@ -19,16 +19,27 @@ exports.getConnection = function () {
             createConnection().then(() => {
                 resolve(db);
             })
-            .catch((error) => {
-                // Something went wrong. Let's try one more time before panicking
-                createConnection().then(() => {
-                    resolve(db);
-                })
                 .catch((error) => {
-                    reject(error);
-                })
-            });
+                    // Something went wrong. Let's try one more time before panicking
+                    createConnection().then(() => {
+                        resolve(db);
+                    })
+                        .catch((error) => {
+                            reject(error);
+                        })
+                });
         }
+    });
+};
+
+exports.testDatabase = function () {
+    return new Promise((resolve, reject) => {
+        connection.ping(err => {
+            if (err)
+                reject(err);
+            else
+                resolve();
+        });
     });
 };
 
@@ -39,7 +50,9 @@ function createConnection() {
 
         connection = mysql.createConnection(mysqlSettings);
         connection.on("error", function (err) {
-            switch(err.code) {
+            console.error("DATABASE ERROR:");
+            console.error(err);
+            switch (err.code) {
                 case "PROTOCOL_CONNECTION_LOST":
                 case "PROTOCOL_PACKETS_OUT_OF_ORDER":
                     createConnection();

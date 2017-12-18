@@ -3,14 +3,13 @@
  */
 
 const mysqlHandler = require("../util/mysql_handler");
-const db = mysqlHandler.getConnection();
 
 // Local cache
 let roles = {};
 exports.getRoleNames = function () {
     return new Promise((resolve, reject) => {
         let roles = [];
-        db.then(connection => {
+        mysqlHandler.getConnection().then(connection => {
             connection.query("SELECT name FROM roles;", (err, rows) => {
                 if (err)
                     reject(err);
@@ -30,7 +29,7 @@ exports.getRoleByName = function (name) {
         if (roles[name]) {
             resolve(roles[name]);
         } else {
-            db.then(connection => {
+            mysqlHandler.getConnection().then(connection => {
                 connection.one("SELECT * FROM roles WHERE name = ?", name, (err, row) => {
                     if (err) {
                         reject(err);
@@ -49,7 +48,7 @@ exports.getRoleByName = function (name) {
                     roles[row.name] = role;
                     resolve(role);
                 });
-            });
+            })
         }
     });
 };
@@ -65,7 +64,7 @@ exports.getRoleById = function (id) {
         });
 
         // If we arrive at this point we didn't find the requested role in our local Cache. Let's look in the database instead.
-        db.then(connection => {
+        mysqlHandler.getConnection().then(connection => {
             connection.one("SELECT * FROM roles WHERE id = ?", id, (err, row) => {
                 if (err) {
                     reject(err);
@@ -100,7 +99,7 @@ exports.getRoleByRank = function (rank) {
         });
 
         // If we arrive at this point we didn't find the requested role in our local Cache. Let's look in the database instead.
-        db.then(connection => {
+        mysqlHandler.getConnection().then(connection => {
             connection.one("SELECT * FROM roles WHERE rank = ?", rank, (err, row) => {
                 if (err) {
                     reject(err);
@@ -128,7 +127,7 @@ exports.getRoleByLowestRank = function () {
     return new Promise((resolve, reject) => {
 
         // If we arrive at this point we didn't find the requested role in our local Cache. Let's look in the database instead.
-        db.then(connection => {
+        mysqlHandler.getConnection().then(connection => {
             connection.one("SELECT * FROM roles WHERE rank = (SELECT MAX(rank) FROM roles)", (err, row) => {
                 if (err) {
                     reject(err);
@@ -155,7 +154,7 @@ exports.getRoleByHighestRank = function () {
     // Check the cache
     return new Promise((resolve, reject) => {
         // If we arrive at this point we didn't find the requested role in our local Cache. Let's look in the database instead.
-        db.then(connection => {
+        mysqlHandler.getConnection().then(connection => {
             connection.one("SELECT * FROM roles WHERE rank = (SELECT MIN(rank) FROM roles)", (err, row) => {
                 if (err) {
                     reject(err);
@@ -184,13 +183,13 @@ exports.checkAuthorizationForRoleIds = function (ids) {
             resolve(false);
         }
 
-        db.then(connection => {
+        mysqlHandler.getConnection().then(connection => {
             connection.one("SELECT * FROM adminRoles WHERE id = ?", ids, (err, row) => {
                 if (err) {
                     reject(err);
                 }
                 resolve(row ? true : false);
-            })
-        })
+            });
+        });
     });
 };

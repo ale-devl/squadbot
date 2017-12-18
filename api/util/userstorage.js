@@ -1,8 +1,6 @@
 const bot = require("../bot/bot.js");
 const mysqlHandler = require("../util/mysql_handler");
-const db = mysqlHandler.getConnection();
-
-
+const cfg = require("../../config");
 let userStorage = {};
 
 /*
@@ -34,7 +32,7 @@ exports.getUserByName = function (name) {
 
 exports.checkAuthorizationForId = function (id) {
     return new Promise((resolve, reject) => {
-        db.then(connection => {
+        mysqlHandler.getConnection().then(connection => {
             connection.one("SELECT * FROM users WHERE id = ? AND isAdmin = 1", id, (err, row) => {
                 if (err) {
                     reject(err);
@@ -42,14 +40,14 @@ exports.checkAuthorizationForId = function (id) {
                 }
 
                 resolve(row ? true : false);
-            })
+            });
         });
     });
 }
 
 function getNewUser(name) {
     return new Promise((resolve, reject) => {
-        let guild = bot.getBot().guilds.find("id", bot.getGuildId());
+        let guild = bot.getBot().guilds.find("id", cfg.settings.guildId);
         let user = {};
         let member = guild.members.filter(member => {
             if (member.nickname) {

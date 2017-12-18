@@ -116,7 +116,7 @@ function modifyUserRole(guild, channel, user) {
                     }
 
                     guildMember.addRole(newRole).catch(error => sendPrivError(error, channel, "add Role"));
-                    channel.send("Welcome to the squad <@" + guildMember.id + ">! You new rank is:  " + role.name.toUpperCase() + "! Now get out there and make me proud!")
+                    channel.send("Welcome to the squad <@" + guildMember.id + ">! Your new rank is:  " + role.name.toUpperCase() + "! Now get out there and make me proud!")
                         .then(() => {
                             guildMember.setNickname(newNick).catch(error => sendPrivError(error, channel, "set Nickname"));
                             resolve();
@@ -127,7 +127,7 @@ function modifyUserRole(guild, channel, user) {
                 });
         } else {
             if (user.rankrole.rank - 1 === 0) {
-                channel.send("<@" + guildMember.id + "> already has the highest rank possible. Do you want this one takes over the world or something?!");
+                channel.send("<@" + guildMember.id + "> already has the highest rank possible. Do you want this one to take over the world or something?!");
             }
             rolestorage.getRoleByRank(user.rankrole.rank - 1)
                 .then(role => {
