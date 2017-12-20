@@ -63,7 +63,7 @@ function checkPermissions () {
         let aMissingPermissions = false;
         let aOccuredErrors = [];
 
-        cfg.permissions.forEach(permission => {
+        cfg.settings.requiredPermissions.forEach(permission => {
             if (!oGuild.me.hasPermission(permission)) {
                 let sErrorMessage = "Missing permission '" + permission + "'!";
                 aOccuredErrors.push(sErrorMessage);
