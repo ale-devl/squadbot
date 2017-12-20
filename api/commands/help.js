@@ -2,10 +2,6 @@ const cmd_dispatcher = require("./command_dispatcher.js");
 const cfg = require("../../config.js");
 const pkg = require("../../package.json");
 
-/**
- * EXPORTS
- */
-
 exports.execute = function (args) {
     if (args.arguments.length === 0) {
         postGuide(args.msg.channel);
@@ -60,12 +56,6 @@ exports.getDescription = function () {
         example: "-sb help foo"
     };
 };
-
-
-
-/**
- * GUIDE
- */
 
 function postGuide(channel) {
     let aCommands = cmd_dispatcher.getCommands();
