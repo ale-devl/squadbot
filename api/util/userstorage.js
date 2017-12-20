@@ -1,6 +1,6 @@
-const bot = require("../bot/bot.js");
+const bot = require("../bot/bot");
 const mysqlHandler = require("../util/mysql_handler");
-const cfg = require("../../config");
+const cfg = require("../bot/config");
 let userStorage = {};
 
 /*

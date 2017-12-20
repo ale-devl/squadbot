@@ -1,4 +1,4 @@
-const cfg = require("../../config.js");
+const cfg = require("../bot/config");
 const cmd_dispatcher = require("../commands/command_dispatcher");
 
 exports.parse_and_dispatch = function (msg) {
