@@ -113,7 +113,21 @@ function loadConfig() {
                     cfg.settings.adminRoles.push(rows[i].id);
                 }
             }
-        })
+        });
+        connection.query("SELECT * FROM permissions", (err, rows) => {
+            if (rows) {
+                for (let i = 0; i < rows.length; ++i) {
+                    cfg.settings.requiredPermissions.push(rows[i].name);
+                }
+            }
+        });
+        connection.one("SELECT * FROM settings", (err, row) => {
+            if (row) {
+                Object.keys(row).forEach(key => {
+                    cfg.settings[key] = row[key];
+                });
+            }
+        });
     });
 
     if (!process.env.squadbotToken || !process.env.mysqlUser || !process.env.mysqlUrl || !process.env.mysqlPassword || !process.env.mysqlDB) {
@@ -133,7 +147,7 @@ function checkPermissions(channel, isRecheck = false, silentMode = false) {
     channel = channel || guild.channels.find("id", cfg.settings.botCmdId);
     missingPermissions = false;
 
-    cfg.permissions.forEach(permission => {
+    cfg.settings.requiredPermissions.forEach(permission => {
         if (!guild.me.hasPermission(permission)) {
             channel.send("Permission check: Missing permission '" + permission + "'!");
             missingPermissions = true;

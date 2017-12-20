@@ -14,18 +14,11 @@ module.exports = {
     // Then create a new application and grab your token.
     token: process.env.squadbotToken,
 
-    // Required permissions
-    permissions: [
-        "MANAGE_NICKNAMES",
-        "SEND_MESSAGES",
-        "MANAGE_ROLES"
-    ],
-
-    // This will be done dynamically. Just a infodump -> Is this comment outdated?
     settings: {
         adminRoles: [],
-        guildId: "290169405265149962", // Local: 361929815483482112
-        botCmdId: "381861016914624515" // Local: 361929815483482114
+        requiredPermissions: [],
+        guildId: "",
+        botCmdId: ""
     },
 
     mysql: {

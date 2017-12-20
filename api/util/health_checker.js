@@ -43,7 +43,7 @@ function checkPermissions() {
         let guild = bot.getBot().guilds.find("id", cfg.settings.guildId);
         let missingPermissions = false;
 
-        cfg.permissions.forEach(permission => {
+        cfg.settings.requiredPermissions.forEach(permission => {
             if (!guild.me.hasPermission(permission)) {
                 let errorMessage = "Healthcheck: Missing permission '" + permission + "'!";
                 console.log(errorMessage);
