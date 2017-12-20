@@ -6,7 +6,7 @@ const discord = require("discord.js");
 const bot = new discord.Client();
 const healthChecker = require("../util/health_checker");
 
-let missingPermissions;
+let oLockdown = {}; // active: boolean, reason: array of strings
 let userstorage;
 let rolestorage;
 let parser;
@@ -42,10 +42,19 @@ exports.getBot = function () {
     return bot;
 };
 
-exports.lockBot = function (channel) {
-    missingPermissions = true;
-    channel.send("There were missing permissions. Bot is on **lockdown** until the problems are solved. Use '> checkpermission' to trigger a recheck.");
+exports.lockBot = function (channel, reason) {
+    let oGuild = bot.guilds.find("id", cfg.settings.gsuildId);
+    channel = channel || oGuild.channels.find("id", cfg.settings.botCmdId);
+    oLockdown.active = true;
+    oLockdown.reason = reason;
+    channel.send("Bot is on **lockdown** for the following reasons: " + reason + ". Use '> unlock' to trigger a check and unlock the bot if possible.");
 };
+
+exports.unlockBot = function () {
+    oLockdown.active = false;
+    oLockdown.reason = [];
+    healthChecker.registerHealthChecks(30 /*minutes*/ * 60 * 1000);
+}
 
 exports.reportToOwner = function (message) {
     bot.fetchUser("166154532714184704").then(owner => {
@@ -57,12 +66,19 @@ bot.on("message", msg => {
     if (msg.author.id === bot.user.id)
         return;
 
-    if (missingPermissions) {
-        if (msg.content === "> checkpermission") {
-            checkPermissions(msg.channel, true);
+    if (oLockdown.active) {
+        if (msg.content === "> unlock") {
+            healthChecker.singleHealthCheck()
+                .then(() => {
+                    msg.channel.send("All fine! Bot unlocked.");
+                    this.unlockBot();
+                })
+                .catch(err => {
+                    msg.channel.send("Error: " + err + ". Bot remains locked");
+                });
         }
         else if (msg.content[0] === cfg.prefix) {
-            msg.channel.send("Bot locked due to missing permissions. Use '> checkpermission' to retrigger the check and unlock the bot if permissions are fixed");
+            msg.channel.send("Bot locked. Use '> unlock' to retrigger the check and unlock the bot if possible!");
         }
     }
     else
@@ -71,18 +87,24 @@ bot.on("message", msg => {
 
 bot.login(cfg.token)
     .then(() => {
-        checkPermissions();
         console.log("Running!");
         console.log(bot.user);
 
-        healthChecker.registerHealthChecks(30 /*minutes*/ * 60 * 1000);
+        healthChecker.singleHealthCheck()
+            .then(() => {
+                healthChecker.registerHealthChecks(30 /* minutes */ * 60 * 1000);
+            })
+            .catch(err => {
+                this.lockBot(null, err);
+            });;
 
         //setupGuide(); TODO: Implement again
     })
     .catch(error => {
     });
 
-function setupGuide() {
+// DEAD CODE FOR NOW
+function setupGuide () {
     let aCommands = dispatcher.getCommands();
     let sGuide = pkg.name + " " + pkg.version + "\n";
     sGuide += pkg.description + "\n\n";
@@ -104,8 +126,9 @@ function setupGuide() {
     channel.fetchMessage("313942220933693441")
         .then(message => message.edit(sGuide));
 }
+// END OF DEAD CODE
 
-function loadConfig() {
+function loadConfig () {
     mysqlHandler.getConnection().then(connection => {
         connection.query("SELECT * FROM adminRoles", (err, rows) => {
             if (rows) {
@@ -113,27 +136,32 @@ function loadConfig() {
                     cfg.settings.adminRoles.push(rows[i].id);
                 }
             }
-        })
+        });
+        connection.query("SELECT * FROM permissions", (err, rows) => {
+            if (rows) {
+                for (let i = 0; i < rows.length; ++i) {
+                    cfg.settings.requiredPermissions.push(rows[i].name);
+                }
+            }
+        });
+        connection.one("SELECT * FROM settings", (err, row) => {
+            if (row) {
+                Object.keys(row).forEach(key => {
+                    cfg.settings[key] = row[key];
+                });
+            }
+        });
     });
-
-    if (!process.env.squadbotToken || !process.env.mysqlUser || !process.env.mysqlUrl || !process.env.mysqlPassword || !process.env.mysqlDB) {
-        console.error("ERROR: Missing some Environmental variable!");
-        console.error("squadbotToken: " + process.env.squadbotToken);
-        console.error("mysqlUser: " + process.env.mysqlUser);
-        console.error("mysqlUrl: " + process.env.mysqlUrl);
-        console.error("mysqlPassword: " + process.env.mysqlPassword);
-        console.error("mysqlDB: " + process.env.mysqlDB);
-        nop.forceException();
-    }
 }
 
-function checkPermissions(channel, isRecheck = false, silentMode = false) {
+// TODO: Remove this. We have a health check now that needs to do exactly the same as this function. Adapt it, then remove this please!
+function checkPermissions (channel, isRecheck = false, silentMode = false) {
     console.log("Checking permission..");
     let guild = bot.guilds.find("id", cfg.settings.guildId);
     channel = channel || guild.channels.find("id", cfg.settings.botCmdId);
     missingPermissions = false;
 
-    cfg.permissions.forEach(permission => {
+    cfg.settings.requiredPermissions.forEach(permission => {
         if (!guild.me.hasPermission(permission)) {
             channel.send("Permission check: Missing permission '" + permission + "'!");
             missingPermissions = true;
