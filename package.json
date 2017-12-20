@@ -8,7 +8,7 @@
     "run": "node index.js",
     "dev": "nodemon index.js",
     "debug": "node --inspect-brk=0.0.0.0:9229 index.js",
-    "test": "test"
+    "test": "mocha test/unit test/playground.js"
   },
   "author": "aletuna",
   "license": "ISC",
@@ -27,6 +27,14 @@
     "uws": "^0.14.1"
   },
   "devDependencies": {
-    "eslint": "^4.12.0"
+    "chai": "^4.1.2",
+    "eslint": "^4.12.0",
+    "mocha": "^4.0.1",
+    "proxyquire": "*",
+    "rewire": "^2.5.1",
+    "rewire-global": "^1.0.11",
+    "sinon": "^4.1.3",
+    "sinon-chai": "^2.14.0",
+    "sinon-stub-promise": "^4.0.0"
   }
 }

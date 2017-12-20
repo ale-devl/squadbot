@@ -1,5 +1,5 @@
-const cmd_dispatcher = require("./command_dispatcher.js");
-const cfg = require("../../config.js");
+const cmd_dispatcher = require("./command_dispatcher");
+const cfg = require("../bot/config");
 const pkg = require("../../package.json");
 
 exports.execute = function (args) {

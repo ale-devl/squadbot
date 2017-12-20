@@ -1,0 +1,4 @@
+--delay
+--require ./test/setup
+--timeout 2000
+--recursive

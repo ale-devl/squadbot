@@ -1,7 +1,7 @@
-const bot = require("../bot/bot.js");
+const bot = require("../bot/bot");
 const userstorage = require("../util/userstorage");
 const rolestorage = require("../util/rolestorage");
-const cfg = require("../../config");
+const cfg = require("../bot/config");
 const authChecker = require("../util/auth_checker");
 
 exports.execute = function (args) {
