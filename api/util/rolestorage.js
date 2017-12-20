@@ -1,7 +1,3 @@
-/**
- *  TODO: Make this dynamic because static things are bad news
- */
-
 const mysqlHandler = require("../util/mysql_handler");
 
 // Local cache

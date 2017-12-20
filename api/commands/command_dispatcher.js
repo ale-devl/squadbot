@@ -1,8 +1,6 @@
-// This files purpose is to require all commands so we don't have to create a huge list in other files
 const oCommands = {
     help: require("./help"),
     ping: require("./ping"),
-    deleteLast: require("./deleteLastXMessages"),
     promote: require("./promote"),
     degrade: require("./degrade"),
     eval: require("./eval"),
