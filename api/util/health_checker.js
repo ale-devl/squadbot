@@ -8,7 +8,25 @@ exports.registerHealthChecks = function (interval) {
     setTimeout(performHealthCheck, interval, interval);
 };
 
-function performHealthCheck(interval) {
+exports.singleHealthCheck = function () {
+    return new Promise((resolve, reject) => {
+        console.log("Performing single healthcheck..");
+        checkDatabaseConnection()
+            .then(checkPermissions)
+            .then(checkEnvVariables)
+            .then(() => {
+                console.log("End of Healthcheck.");
+                resolve();
+            })
+            .catch(err => {
+                console.log("Healthcheck finished with errors. Err: " + err);
+                bot.reportToOwner("Healthcheck finished with errors!");
+                reject(err);
+            });
+    });
+};
+
+function performHealthCheck (interval) {
     console.log("Start of Healthcheck");
     checkDatabaseConnection()
         .then(checkPermissions)
@@ -20,10 +38,11 @@ function performHealthCheck(interval) {
         .catch(err => {
             console.log("Healthcheck finished with errors. Err: " + err);
             bot.reportToOwner("Healthcheck finished with errors!");
+            bot.lockBot(null, err);
         });
 };
 
-function checkDatabaseConnection() {
+function checkDatabaseConnection () {
     return new Promise((resolve, reject) => {
         mysqlHandler.testDatabase()
             .then(() => {
@@ -37,11 +56,12 @@ function checkDatabaseConnection() {
     });
 }
 
-function checkPermissions() {
+function checkPermissions () {
     return new Promise((resolve, reject) => {
         console.log("Healthcheck: Checking permissions...");
-        let guild = bot.getBot().guilds.find("id", cfg.settings.guildId);
-        let missingPermissions = false;
+        let oGuild = bot.getBot().guilds.find("id", cfg.settings.guildId);
+        let aMissingPermissions = false;
+        let aOccuredErrors = [];
 
         cfg.settings.requiredPermissions.forEach(permission => {
             if (!guild.me.hasPermission(permission)) {
@@ -54,16 +74,17 @@ function checkPermissions() {
 
         rolestorage.getRoleByHighestRank()
             .then(role => {
-                if (guild.roles.find("id", role.id).position > guild.me.highestRole.position) {
-                    let errorMessage = "Healthcheck: Not high enough in Hierarchy!";
-                    console.log(errorMessage);
-                    bot.reportToOwner(errorMessage);
-                    missingPermissions = true;
+                if (oGuild.roles.find("id", role.id).position > oGuild.me.highestRole.position) {
+                    let sErrorMessage = "Not high enough in Hierarchy!";
+                    console.log("Healthcheck: " + sErrorMessage);
+                    bot.reportToOwner("Healthcheck: " + sErrorMessage);
+                    aOccuredErrors.push(sErrorMessage);
+                    aMissingPermissions = true;
                 }
 
-                if (missingPermissions) {
+                if (aMissingPermissions) {
                     console.log("Healthcheck PermissionCheck finished with errors.");
-                    reject();
+                    reject(aOccuredErrors);
                 } else {
                     console.log("Healthcheck: PermissionCheck finished successfully");
                     resolve();
@@ -72,27 +93,28 @@ function checkPermissions() {
     });
 }
 
-function checkEnvVariables() {
+function checkEnvVariables () {
     return new Promise((resolve, reject) => {
-        let missingVariables = [];
+        let aMissingVariables = [];
 
         switch (undefined) {
             case cfg.mysql.url:
-                missingVariables.push("url");
+                aMissingVariables.push("url");
                 break;
             case cfg.mysql.user:
-                missingVariables.push("user");
+                aMissingVariables.push("user");
                 break;
             case cfg.mysql.password:
-                missingVariables.push("password");
+                aMissingVariables.push("password");
                 break;
             case cfg.mysql.database:
-                missingVariables.push("database");
+                aMissingVariables.push("database");
                 break;
         }
 
-        if (missingVariables.length > 0) {
-            bot.reportToOwner("Healthcheck: Missing the following Variables: " + missingVariables);
+        if (aMissingVariables.length > 0) {
+            let sErrorMessage = "Missing the following Environment Variables: " + aMissingVariables;
+            bot.reportToOwner("Healthcheck: " + sErrorMessage);
             reject();
         } else {
             console.log("Healthcheck: Environment Variables are fine!")
