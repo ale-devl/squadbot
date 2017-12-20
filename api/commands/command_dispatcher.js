@@ -5,7 +5,8 @@ const oCommands = {
     degrade: require("./degrade"),
     eval: require("./eval"),
     rename: require("./rename"),
-    fixname: require("./fixName")
+    fixname: require("./fixName"),
+    semp: require("./semp")
 };
 
 exports.execute = function (cmd) {
