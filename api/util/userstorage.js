@@ -4,11 +4,12 @@ const cfg = require("../../config");
 let userStorage = {};
 
 /*
+    TODO: Check if up to date
     User structure:
-    id
-    name (in upper)
-    rankRole
-    roles
+    {string} id
+    {string} name (in upper)
+    {array} roles 
+    (rankRole)
 */
 
 exports.getUserByName = function (name) {

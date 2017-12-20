@@ -24,7 +24,6 @@
     "node-opus": "^0.2.7",
     "nodesql": "^0.2.4",
     "opusscript": "0.0.3",
-    "sodium": "^2.0.1",
     "uws": "^0.14.1"
   },
   "devDependencies": {

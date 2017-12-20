@@ -54,7 +54,7 @@ function createConnection() {
             console.error(err);
             switch (err.code) {
                 case "PROTOCOL_CONNECTION_LOST":
-                case "PROTOCOL_PACKETS_OUT_OF_ORDER":
+                case "PROTOCOL_PACKETS_OUT_OF_ORDER": // This usually happens after a root reboot. No idea why!
                     createConnection();
                     break;
                 default:
