@@ -1,3 +1,4 @@
+const queueExecuter = require("./queue_executer");
 const oCommands = {
     help: require("./help"),
     ping: require("./ping"),
@@ -6,12 +7,22 @@ const oCommands = {
     eval: require("./eval"),
     rename: require("./rename"),
     fixname: require("./fixName"),
-    semp: require("./semp")
 };
 
+
+
+
 exports.execute = function (cmd) {
-    if (oCommands[cmd.name.toLowerCase()]) {
-        oCommands[cmd.name.toLowerCase()].execute(cmd);
+    const commandName = cmd.name.toLowerCase();
+    if (null != oCommands[commandName]) {
+        if (null != queueExecuter) { /* using queue strategy for command handling */
+
+            queueExecuter.execute(oCommands[commandName], cmd);
+        } else { /* do not use queue strategy */
+
+            oCommands[cmd.name.toLowerCase()].execute(cmd);
+        }
+
     } else {
         throw {
             name: "unkCmd",
